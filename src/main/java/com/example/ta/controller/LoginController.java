@@ -25,7 +25,7 @@ public class LoginController {
     public String login(@ModelAttribute User user, Model model) {
         User u = userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
         if (u != null) {
-            return "redirect:/welcome"; // ganti sesuai halaman sukses login
+            return "redirect:/dashboard"; // ganti sesuai halaman sukses login
         }
         model.addAttribute("error", "Username atau Password salah");
         return "login";
@@ -53,8 +53,8 @@ public class LoginController {
         return "redirect:/";
     }
 
-    @GetMapping("/welcome")
-    public String welcomePage() {
-        return "welcome";
-    }
+    @GetMapping("/dashboard")
+        public String Testing() {
+            return "index";
+        }
 }
