@@ -2,15 +2,77 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333333;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .link {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .link a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h2>Login</h2>
-    <form th:action="@{/login}" th:object="${user}" method="post">
-        <p>Username: <input type="text" th:field="*{username}" /></p>
-        <p>Password: <input type="password" th:field="*{password}" /></p>
-        <p><button type="submit">Login</button></p>
-    </form>
-    <p th:if="${error}" th:text="${error}" style="color: red;"></p>
-    <p>Belum punya akun? <a th:href="@{/register}">Daftar di sini</a></p>
+    <div class="container">
+        <h2>Login Akun</h2>
+        <form th:action="@{/login}" th:object="${user}" method="post">
+            <input type="text" th:field="*{username}" placeholder="Username" required />
+            <input type="password" th:field="*{password}" placeholder="Password" required />
+            <button type="submit">Login</button>
+        </form>
+        <p class="error" th:if="${error}" th:text="${error}"></p>
+        <div class="link">
+            <p>Belum punya akun? <a th:href="@{/register}">Daftar di sini</a></p>
+        </div>
+    </div>
 </body>
 </html>

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @Controller
 public class LoginController {
 
@@ -23,7 +25,7 @@ public class LoginController {
     public String login(@ModelAttribute User user, Model model) {
         User u = userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
         if (u != null) {
-            return "redirect:/welcome"; // Ganti sesuai halaman sukses login
+            return "redirect:/welcome"; // ganti sesuai halaman sukses login
         }
         model.addAttribute("error", "Username atau Password salah");
         return "login";
@@ -41,6 +43,12 @@ public class LoginController {
             model.addAttribute("error", "Username sudah digunakan");
             return "register";
         }
+
+        // Set default value untuk role dan tanggal createdAt, updatedAt
+        user.setRole("USER");
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+
         userRepo.save(user);
         return "redirect:/";
     }
