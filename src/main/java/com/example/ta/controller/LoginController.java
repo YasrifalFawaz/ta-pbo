@@ -62,7 +62,7 @@ public class LoginController {
         user.setUpdatedAt(LocalDateTime.now());
 
         userRepo.save(user);
-        return "redirect:/";
+        return "redirect:/login";
     }
 
     @GetMapping("/admin/index")
