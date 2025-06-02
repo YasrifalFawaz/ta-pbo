@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard Hotel</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .admin-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f9fafb;
+            padding: 10px 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .nav-left a {
+            margin-right: 20px;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .nav-left .btn-dashboard {
+            background-color: #7c3aed;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-left a:hover {
+            color: #111827;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-right span {
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .btn-logout {
+            background-color: #d1d5db;
+            color: #111827;
+            padding: 6px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn-logout:hover {
+            background-color: #9ca3af;
+            color: white;
+        }
+
+        .dashboard-container {
+            padding: 30px;
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-title span {
+            font-size: 22px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            flex: 1;
+            min-width: 250px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            padding: 20px;
+            border-top: 4px solid #7c3aed;
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #111827;
+        }
+
+        .card-icon {
+            font-size: 40px;
+            color: #7c3aed;
+        }
+
+        .card-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="admin-navbar">
+    <div class="nav-left">
+        <a href="#" class="btn-dashboard">📈 Dashboard</a>
+        <a href="#">Bookings</a>
+        <a href="#">+ New Booking</a>
+        <a href="#">👥 Users</a>
+        <a href="#">🏨 Rooms</a>
+    </div>
+
+    <div class="nav-right">
+        <span>Logged in as: kipsiancommunity@gmail.com</span>
+        <a href="#" class="btn-logout">⎋ Logout</a>
+    </div>
+</div>
+
+<div class="dashboard-container">
+    <div class="dashboard-title">⚙️ <span>Dashboard Overview</span></div>
+
+    <div class="cards">
+        <div class="card">
+            <div class="card-content">
+                <div>
+                    <div class="card-title">TOTAL ROOMS</div>
+                    <div class="card-value">6</div>
+                </div>
+                <div class="card-icon">🏨</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <div>
+                    <div class="card-title">BOOKED ROOMS</div>
+                    <div class="card-value">4</div>
+                </div>
+                <div class="card-icon">🔔</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-content">
+                <div>
+                    <div class="card-title">AVAILABLE ROOMS</div>
+                    <div class="card-value">2</div>
+                </div>
+                <div class="card-icon">✅</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

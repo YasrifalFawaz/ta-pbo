@@ -16,6 +16,11 @@ public class LoginController {
     private UserRepository userRepo;
 
     @GetMapping("/")
+    public String index(Model model) {
+        return "index";
+    }
+
+    @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("user", new User());
         return "login";
@@ -25,7 +30,15 @@ public class LoginController {
     public String login(@ModelAttribute User user, Model model) {
         User u = userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
         if (u != null) {
-            return "redirect:/dashboard"; // ganti sesuai halaman sukses login
+            // Cek role user setelah login
+            if ("ADMIN".equals(u.getRole())) {
+                return "redirect:/admin/index";
+            } else if ("USER".equals(u.getRole())) {
+                return "redirect:/user/index";
+            } else {
+                model.addAttribute("error", "Role tidak dikenali");
+                return "login";
+            }
         }
         model.addAttribute("error", "Username atau Password salah");
         return "login";
@@ -44,7 +57,6 @@ public class LoginController {
             return "register";
         }
 
-        // Set default value untuk role dan tanggal createdAt, updatedAt
         user.setRole("USER");
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
@@ -53,8 +65,18 @@ public class LoginController {
         return "redirect:/";
     }
 
-    @GetMapping("/dashboard")
-        public String Testing() {
-            return "index";
-        }
+    @GetMapping("/admin/index")
+    public String adminDashboard() {
+        return "admin/index";
+    }
+
+    @GetMapping("/user/dashboard")
+    public String userDashboard() {
+        return "user_dashboard";
+    }
+
+    @GetMapping("/index")
+    public String index() {
+        return "index";
+    }
 }
