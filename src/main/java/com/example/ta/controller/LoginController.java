@@ -32,7 +32,7 @@ public class LoginController {
         if (u != null) {
             // Cek role user setelah login
             if ("ADMIN".equals(u.getRole())) {
-                return "redirect:/admin/index";
+                return "redirect:/admin/dashboard";
             } else if ("USER".equals(u.getRole())) {
                 return "redirect:/user/index";
             } else {
@@ -65,18 +65,4 @@ public class LoginController {
         return "redirect:/login";
     }
 
-    @GetMapping("/admin/index")
-    public String adminDashboard() {
-        return "admin/index";
-    }
-
-    @GetMapping("/user/dashboard")
-    public String userDashboard() {
-        return "user_dashboard";
-    }
-
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
 }
