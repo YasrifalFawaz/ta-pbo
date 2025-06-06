@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.List;
 import com.example.ta.model.User;
 import com.example.ta.repository.UserRepository;
@@ -27,25 +26,11 @@ public class AdminController {
         return "admin/dashboard";
     }
 
-    // Reservasi
-    @GetMapping("/reservasi")
-    public String showReservasiPage(Model model) {
-        model.addAttribute("currentPage", "reservasi");
-        return "admin/reservasi";
-    }
-
-    // Kamar
-    @GetMapping("/kamar")
-    public String showKamarPage(Model model) {
-        model.addAttribute("currentPage", "kamar");
-        return "admin/kamar";
-    }
-
     // List User (tampilkan tabel)
     @GetMapping("/user")
     public String listUsers(Model model) {
         List<User> users = userRepository.findAll();
-        model.addAttribute("listUsers", users);  // <- disesuaikan ke listUsers
+        model.addAttribute("listUsers", users);
         model.addAttribute("currentPage", "user");
         return "admin/user";
     }
@@ -59,8 +44,12 @@ public class AdminController {
     }
 
     // Simpan User
-    @PostMapping("/user/save")
+     @PostMapping("/user/save")
     public String saveUser(@ModelAttribute User user) {
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            user.setRole("USER");
+        }
+        
         userRepository.save(user);
         return "redirect:/admin/user";
     }
@@ -88,4 +77,5 @@ public class AdminController {
         userRepository.deleteById(id);
         return "redirect:/admin/user";
     }
+    
 }

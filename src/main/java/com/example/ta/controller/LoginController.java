@@ -2,11 +2,11 @@ package com.example.ta.controller;
 
 import com.example.ta.model.User;
 import com.example.ta.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 
 @Controller
@@ -64,5 +64,9 @@ public class LoginController {
         userRepo.save(user);
         return "redirect:/login";
     }
-
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login";
+    }
 }

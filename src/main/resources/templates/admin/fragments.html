@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 
+    <!-- Navbar -->
     <nav th:fragment="navbar" class="navbar navbar-expand-lg header-custom sticky-top">
         <div class="container-fluid">
             <a class="navbar-brand logo-text" th:href="@{/admin/dashboard}">HotelKu</a>
@@ -13,14 +14,14 @@
                         <span>Admin</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
-                        <li><a class="dropdown-item" href="#">Logout</a></li>
+                       <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Sidebar tetap -->
+    <!-- Sidebar -->
     <nav th:fragment="sidebar(currentPage)" id="sidebarMenuInternal" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
         <div class="position-sticky pt-3">
             <ul class="nav flex-column">
@@ -30,18 +31,23 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/reservasi}" th:classappend="${currentPage == 'reservasi' ? 'active' : ''}">
-                        <i class="bi bi-calendar2-check-fill me-2"></i>Reservasi
+                    <a class="nav-link" th:href="@{/admin/user}" th:classappend="${currentPage == 'user' ? 'active' : ''}">
+                        <i class="bi bi-person-fill me-2"></i>User
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/kamar}" th:classappend="${currentPage == 'kamar' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{/admin/booking}" th:classappend="${currentPage == 'reservasi' ? 'active' : ''}">
+                        <i class="bi bi-calendar2-check-fill me-2"></i>Booking
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/room}" th:classappend="${currentPage == 'room' ? 'active' : ''}">
                         <i class="bi bi-door-open-fill me-2"></i>Kamar
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin/user}" th:classappend="${currentPage == 'user' ? 'active' : ''}">
-                        <i class="bi bi-person-fill me-2"></i>User
+                    <a class="nav-link" th:href="@{/admin/roomtype}" th:classappend="${currentPage == 'roomtype' ? 'active' : ''}">
+                        <i class="bi bi-grid-3x3-gap-fill me-2"></i>Tipe Kamar
                     </a>
                 </li>
             </ul>

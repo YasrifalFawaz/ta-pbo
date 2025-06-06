@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Tambah Tipe Kamar - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .sidebar {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 10px 15px;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #34495e;
+            border-left-color: #1abc9c;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #34495e;
+            border-left-color: #1abc9c;
+            font-weight: bold;
+        }
+
+        /* Ubah navbar jadi grey dan teks jadi putih */
+        .header-custom {
+            background-color: #4b4b4b;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .logo-text, 
+        .hotel-name-text, 
+        .date-time-text, 
+        .header-custom a, 
+        .header-custom span {
+            color: #ffffff !important;
+        }
+
+        .notifications-icon .badge {
+            font-size: 0.7em;
+        }
+
+        .icon-text {
+            font-size: 1.2rem;
+            margin-right: 5px;
+        }
+
+        .content-area {
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="~{admin/fragments :: navbar}" class="header-custom"></header>
+
+<div class="container mt-4">
+    <h2>Tambah Tipe Kamar</h2>
+    <form th:action="@{/admin/roomtype/save}" th:object="${roomType}" method="post">
+        <input type="hidden" th:field="*{id}" />
+        
+        <div class="mb-3">
+            <label for="typeName" class="form-label">Nama Tipe</label>
+            <input type="text" th:field="*{typeName}" class="form-control" id="typeName" placeholder="Masukkan nama tipe kamar" required />
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Deskripsi</label>
+            <textarea th:field="*{description}" class="form-control" id="description" placeholder="Masukkan deskripsi tipe kamar" rows="3" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="basePrice" class="form-label">Harga Dasar</label>
+            <input type="number" min="0" step="1000" th:field="*{basePrice}" class="form-control" id="basePrice" placeholder="Masukkan harga dasar" required />
+        </div>
+        <div class="mb-3">
+            <label for="maxOccupancy" class="form-label">Kapasitas Maksimal</label>
+            <input type="number" min="1" th:field="*{maxOccupancy}" class="form-control" id="maxOccupancy" placeholder="Masukkan kapasitas maksimal" required />
+        </div>
+        <div class="mb-3">
+            <label for="amenities" class="form-label">Fasilitas</label>
+            <input type="text" th:field="*{amenities}" class="form-control" id="amenities" placeholder="Masukkan fasilitas (pisahkan dengan koma)" />
+        </div>
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a th:href="@{/admin/roomtype}" class="btn btn-secondary ms-2">Batal</a>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

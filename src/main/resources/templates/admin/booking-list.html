@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Daftar Booking</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+        .sidebar .nav-link {
+            color: #ecf0f1;
+            padding: 10px 15px;
+            border-left: 3px solid transparent;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #34495e;
+            border-left-color: #1abc9c;
+        }
+        .sidebar .nav-link.active {
+            background-color: #34495e;
+            border-left-color: #1abc9c;
+            font-weight: bold;
+        }
+        .header-custom {
+            background-color: #4b4b4b;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .logo-text, 
+        .hotel-name-text, 
+        .date-time-text, 
+        .header-custom a, 
+        .header-custom span {
+            color: #ffffff !important;
+        }
+        .content-area {
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<header th:replace="~{admin/fragments :: navbar}" class="header-custom"></header>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav th:replace="~{admin/fragments :: sidebar(currentPage='booking')}" class="col-md-3 col-lg-2 d-md-block sidebar collapse"></nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 content-area">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+                <h2>Daftar Booking</h2>
+                <a href="/admin/booking/create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Tambah Booking
+                </a>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="mb-3">
+                <a href="/admin/booking" class="btn btn-outline-secondary btn-sm">Semua</a>
+                <a href="/admin/booking/pending" class="btn btn-outline-warning btn-sm">Pending</a>
+                <a href="/admin/booking/status/CONFIRMED" class="btn btn-outline-success btn-sm">Confirmed</a>
+                <a href="/admin/booking/status/CHECKED_IN" class="btn btn-outline-info btn-sm">Checked In</a>
+                <a href="/admin/booking/status/CHECKED_OUT" class="btn btn-outline-primary btn-sm">Checked Out</a>
+                <a href="/admin/booking/status/CANCELLED" class="btn btn-outline-danger btn-sm">Cancelled</a>
+                <a href="/admin/booking/checkin-today" class="btn btn-outline-dark btn-sm">Check-in Hari Ini</a>
+                <a href="/admin/booking/checkout-today" class="btn btn-outline-dark btn-sm">Check-out Hari Ini</a>
+            </div>
+
+            <!-- Booking Table -->
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Kode Booking</th>
+                            <th>Guest</th>
+                            <th>Room</th>
+                            <th>Check-in</th>
+                            <th>Check-out</th>
+                            <th>Malam</th>
+                            <th>Total Harga</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="booking : ${listBookings}">
+                            <td th:text="${booking.bookingCode}">BK001</td>
+                            <td th:text="${booking.user.fullName}">John Doe</td>
+                            <td th:text="${booking.room.roomNumber}">101</td>
+                            <td th:text="${#temporals.format(booking.checkInDate, 'dd/MM/yyyy')}">01/01/2024</td>
+                            <td th:text="${#temporals.format(booking.checkOutDate, 'dd/MM/yyyy')}">02/01/2024</td>
+                            <td th:text="${booking.totalNights}">1</td>
+                            <td th:text="${#numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 0, 'POINT')}">100000</td>
+                            <td>
+                                <span th:class="${'badge ' + 
+                                    (booking.status == 'PENDING' ? 'bg-warning' : 
+                                     booking.status == 'CONFIRMED' ? 'bg-success' : 
+                                     booking.status == 'CHECKED_IN' ? 'bg-info' : 
+                                     booking.status == 'CHECKED_OUT' ? 'bg-primary' : 
+                                     booking.status == 'CANCELLED' ? 'bg-danger' : 'bg-secondary')}" 
+                                      th:text="${booking.status}">PENDING</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a th:href="@{/admin/booking/detail/{id}(id=${booking.id})}" 
+                                       class="btn btn-outline-info btn-sm" title="Detail">
+                                       <i class="bi bi-info-circle"></i>
+                                    </a>
+
+                                    <form th:if="${booking.status == 'PENDING'}" 
+                                          th:action="@{/admin/booking/confirm/{id}(id=${booking.id})}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm" 
+                                                onclick="return confirm('Konfirmasi booking ini?')" title="Konfirmasi">
+                                                <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${booking.status == 'CONFIRMED'}" 
+                                          th:action="@{/admin/booking/checkin/{id}(id=${booking.id})}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-info btn-sm" 
+                                                onclick="return confirm('Check-in sekarang?')" title="Check-in">
+                                                <i class="bi bi-door-open"></i>
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${booking.status == 'CHECKED_IN'}" 
+                                          th:action="@{/admin/booking/checkout/{id}(id=${booking.id})}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-primary btn-sm" 
+                                                onclick="return confirm('Check-out sekarang?')" title="Check-out">
+                                                <i class="bi bi-box-arrow-right"></i>
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${booking.status == 'PENDING' or booking.status == 'CONFIRMED'}" 
+                                          th:action="@{/admin/booking/cancel/{id}(id=${booking.id})}" 
+                                          method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" 
+                                                onclick="return confirm('Batalkan booking ini?')" title="Batalkan">
+                                                <i class="bi bi-x-circle"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listBookings)}">
+                            <td colspan="9" class="text-center">Belum ada booking yang tersedia.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
