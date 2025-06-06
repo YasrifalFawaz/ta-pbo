@@ -1,17 +1,21 @@
-    package com.example.ta.controller;
+package com.example.ta.controller;
 
-    import org.springframework.beans.factory.annotation.Autowired;
-    import org.springframework.stereotype.Controller;
-    import org.springframework.ui.Model;
-    import org.springframework.web.bind.annotation.*;
-    import java.time.LocalDate;
-    import java.util.List;
-    import com.example.ta.model.Booking;
-    import com.example.ta.model.Room;
-    import com.example.ta.model.User;
-    import com.example.ta.repository.BookingRepository;
-    import com.example.ta.repository.RoomRepository;
-    import com.example.ta.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.util.List;
+import com.example.ta.model.Booking;
+import com.example.ta.model.Room;
+import com.example.ta.model.User;
+import com.example.ta.repository.BookingRepository;
+import com.example.ta.repository.RoomRepository;
+import com.example.ta.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
     @Controller
     @RequestMapping("/admin/booking")
@@ -63,36 +67,53 @@
 
         // Simpan Booking
         @PostMapping("/save")
-        public String saveBooking(@ModelAttribute Booking booking) {
-            User user = userRepository.findById(booking.getUser().getId())
-                        .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan"));
-            Room room = roomRepository.findById(booking.getRoom().getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Room tidak ditemukan"));
-
-            booking.setUser(user);
-            booking.setRoom(room);
-
-            if (booking.getStatus() == null || booking.getStatus().isEmpty()) {
-                booking.setStatus("CONFIRMED");
+        public String saveBooking(@ModelAttribute Booking booking,
+                                BindingResult bindingResult,
+                                Model model) {
+            
+            // Cek jika ada error validasi
+            if (bindingResult.hasErrors()) {
+                // Tampilkan error di console untuk debugging
+                bindingResult.getAllErrors().forEach(error -> {
+                    System.out.println("Error validasi: " + error.toString());
+                });
+                
+                // Kirim kembali data yang diperlukan ke form
+                model.addAttribute("users", userRepository.findAll());
+                model.addAttribute("rooms", roomRepository.findByStatus("AVAILABLE"));
+                model.addAttribute("currentPage", "booking");
+                return "admin/booking-form";
             }
 
-            booking.calculateTotalNights();
-            booking.calculateTotalPrice();
-            booking.generateBookingCode();
+            try {
+                // Ambil user dan room dari database
+                User user = userRepository.findById(booking.getUser().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan"));
+                Room room = roomRepository.findById(booking.getRoom().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Kamar tidak ditemukan"));
 
-            if (booking.getId() == null) {
-                booking.setCreatedAt(java.time.LocalDateTime.now());
+                // Set relasi
+                booking.setUser(user);
+                booking.setRoom(room);
+                
+                // Hitung nilai-nilai
+                booking.calculateTotalNights();
+                booking.calculateTotalPrice();
+                booking.generateBookingCode();
+                booking.updateTimestamp();
+
+                // Simpan booking
+                bookingRepository.save(booking);
+                return "redirect:/admin/booking";
+                
+            } catch (Exception e) {
+                // Tangani error lainnya
+                model.addAttribute("error", "Gagal menyimpan booking: " + e.getMessage());
+                model.addAttribute("users", userRepository.findAll());
+                model.addAttribute("rooms", roomRepository.findByStatus("AVAILABLE"));
+                model.addAttribute("currentPage", "booking");
+                return "admin/booking";
             }
-            booking.setUpdatedAt(java.time.LocalDateTime.now());
-
-            bookingRepository.save(booking);
-
-            if (booking.getCheckInDate() != null && booking.getCheckInDate().equals(LocalDate.now())) {
-                room.setStatus("OCCUPIED");
-                roomRepository.save(room);
-            }
-
-            return "redirect:/admin/booking";
         }
 
         // Detail Booking
