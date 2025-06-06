@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.ArrayList;
 import java.util.List;
+import com.example.ta.model.Booking;
 import com.example.ta.model.User;
+import com.example.ta.repository.BookingRepository;
+import com.example.ta.repository.RoomRepository;
 import com.example.ta.repository.UserRepository;
 
 @Controller
@@ -19,10 +23,39 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RoomRepository roomRepository;
+
+     @Autowired
+    private BookingRepository bookingRepository;
+
     // Dashboard
-    @GetMapping("/dashboard")
+  @GetMapping("/dashboard")
     public String showDashboardPage(Model model) {
         model.addAttribute("currentPage", "dashboard");
+
+        // Jumlah kamar
+        Long availableRooms = roomRepository.countByStatus("AVAILABLE");
+        Long bookedRooms = roomRepository.countByStatus("BOOKED");
+        Long maintenanceRooms = roomRepository.countByStatus("MAINTENANCE");
+
+        model.addAttribute("availableRooms", availableRooms);
+        model.addAttribute("bookedRooms", bookedRooms);
+        model.addAttribute("maintenanceRooms", maintenanceRooms);
+
+        // Ambil booking status CONFIRMED
+        List<Booking> confirmedBookings = bookingRepository.findByStatus("CONFIRMED");
+
+        // Ambil booking status CHECKED_IN
+        List<Booking> checkedInBookings = bookingRepository.findByStatus("CHECKED_IN");
+
+        // Gabungkan listnya
+        List<Booking> activeBookings = new ArrayList<>();
+        activeBookings.addAll(confirmedBookings);
+        activeBookings.addAll(checkedInBookings);
+
+        model.addAttribute("activeBookings", activeBookings);
+
         return "admin/dashboard";
     }
 
