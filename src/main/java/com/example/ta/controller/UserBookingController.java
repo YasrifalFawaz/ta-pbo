@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import com.example.ta.model.Booking;
 import com.example.ta.model.Room;
@@ -33,41 +34,46 @@ public class UserBookingController {
 
     // Home page - tampilkan room types
     @GetMapping("/home")
-    public String home(Model model) {
-        List<RoomType> roomTypes = roomTypeRepository.findAll();
-        model.addAttribute("roomTypes", roomTypes);
-        return "user/home";
-    }
+    public String home(
+            @RequestParam(required = false) LocalDate checkIn,
+            @RequestParam(required = false) LocalDate checkOut,
+            @RequestParam(required = false) Long roomTypeId,
+            Model model) {
 
-    // Search available rooms
-    @GetMapping("/search")
-    public String searchRooms(@RequestParam(required = false) LocalDate checkIn,
-                             @RequestParam(required = false) LocalDate checkOut,
-                             @RequestParam(required = false) Long roomTypeId,
-                             Model model) {
-        
         List<Room> availableRooms;
-        
+
+        // Logika pencarian tetap sama, menggunakan method dari repository Anda
         if (checkIn != null && checkOut != null) {
-            if (roomTypeId != null) {
-                RoomType roomType = roomTypeRepository.findById(roomTypeId).orElse(null);
-                availableRooms = roomRepository.findAvailableRoomsByTypeAndDateRange(roomType, checkIn, checkOut);
+            if (checkIn.isEqual(checkOut) || checkIn.isAfter(checkOut)) {
+                model.addAttribute("errorMessage", "Tanggal Check-out harus setelah Tanggal Check-in.");
+                availableRooms = new ArrayList<>();
             } else {
-                availableRooms = roomRepository.findAvailableRoomsForDateRange(checkIn, checkOut);
+                if (roomTypeId != null) {
+                    RoomType roomType = roomTypeRepository.findById(roomTypeId).orElse(null);
+                    availableRooms = roomRepository.findAvailableRoomsByTypeAndDateRange(roomType, checkIn, checkOut);
+                } else {
+                    availableRooms = roomRepository.findAvailableRoomsForDateRange(checkIn, checkOut);
+                }
             }
         } else {
+            // Default: menampilkan semua kamar yang statusnya "AVAILABLE"
             availableRooms = roomRepository.findByStatus("AVAILABLE");
         }
-        
-        List<RoomType> roomTypes = roomTypeRepository.findAll();
-        
-        model.addAttribute("rooms", availableRooms);
-        model.addAttribute("roomTypes", roomTypes);
+
+        // --- TIDAK ADA LAGI TRANSFORMASI KE DTO ---
+        // Langsung kirim list of Room entities ke view
+        model.addAttribute("daftarKamar", availableRooms);
+
+        // Bagian lain tetap sama
+        model.addAttribute("roomTypes", roomTypeRepository.findAll());
         model.addAttribute("checkIn", checkIn);
         model.addAttribute("checkOut", checkOut);
         model.addAttribute("selectedRoomTypeId", roomTypeId);
-        return "user/search-rooms";
+        model.addAttribute("currentPage", "home");
+
+        return "user/home";
     }
+
 
     // Booking form
     @GetMapping("/booking/{roomId}")
@@ -112,7 +118,7 @@ public class UserBookingController {
         
         bookingRepository.save(booking);
         
-        return "redirect:/user/my-bookings/" + userId;
+        return "redirect:/user/booking/" + userId;
     }
 
     // My bookings

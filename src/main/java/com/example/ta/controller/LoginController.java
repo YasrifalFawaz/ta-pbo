@@ -34,7 +34,7 @@ public class LoginController {
             if ("ADMIN".equals(u.getRole())) {
                 return "redirect:/admin/dashboard";
             } else if ("USER".equals(u.getRole())) {
-                return "redirect:/user/index";
+                return "redirect:/user/home";
             } else {
                 model.addAttribute("error", "Role tidak dikenali");
                 return "login";
