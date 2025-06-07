@@ -45,17 +45,17 @@ public class Booking {
     
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-    
+
     // Many-to-One relationship with User
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     // Many-to-One relationship with Room
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
-    
+
     // Constructors
     public Booking() {
         this.createdAt = LocalDateTime.now();
@@ -63,7 +63,7 @@ public class Booking {
         this.status = "PENDING";
         this.guestCount = 1;
     }
-    
+
     public Booking(User user, Room room, LocalDate checkInDate, LocalDate checkOutDate, Integer guestCount) {
         this();
         this.user = user;
@@ -75,7 +75,7 @@ public class Booking {
         this.calculateTotalPrice();
         this.generateBookingCode();
     }
-    
+
     // Business Methods
     public void calculateTotalNights() {
         if (checkInDate != null && checkOutDate != null) {
@@ -83,7 +83,7 @@ public class Booking {
             this.totalNights = (int) Math.max(nights, 1); // Minimum 1 malam
         }
     }
-    
+
     public void calculateTotalPrice() {
         if (room != null && room.getPrice() != null && totalNights != null && totalNights > 0) {
             this.totalPrice = room.getPrice().multiply(BigDecimal.valueOf(totalNights));
@@ -91,7 +91,7 @@ public class Booking {
             this.totalPrice = BigDecimal.ZERO;
         }
     }
-    
+
     public void generateBookingCode() {
         if (this.bookingCode == null || this.bookingCode.isEmpty()) {
             // Format: BK + timestamp + random 3 digit
@@ -100,8 +100,7 @@ public class Booking {
             this.bookingCode = String.format("BK%d%03d", timestamp, random);
         }
     }
-    
-    // Method to update timestamps
+
     public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
     }
