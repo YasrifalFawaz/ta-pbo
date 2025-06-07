@@ -96,10 +96,6 @@
       <nav th:replace="~{admin/fragments :: sidebar(currentPage=${currentPage})}" class="col-md-3 col-lg-2 d-md-block sidebar collapse"></nav>
 
       <main class="col-md-9 ms-sm-auto col-lg-10 content-area" id="mainContent">
-        <div class="welcome-section">
-          <h2>Selamat Datang di Dashboard Admin</h2>
-          <p>Kelola data reservasi, kamar, pelanggan, dan transaksi hotel dengan mudah.</p>
-        </div>
         <div class="row g-3">
           <div class="col-md-4">
             <div class="card text-center" style="border: 3px solid #28a745;">
@@ -156,7 +152,7 @@
                   <tr th:each="booking : ${activeBookings}">
                     <td th:text="${booking.user.fullName}">Nama Tamu</td>
                     <td th:text="${booking.room.roomNumber}">101</td>
-                    <td th:text="${booking.room.roomType.name}">Deluxe</td>
+                    <td th:text="${booking.room.roomType.typeName}">Deluxe</td>
                     <td th:text="${booking.checkInDate}">2025-06-06</td>
                     <td th:text="${booking.checkOutDate}">2025-06-08</td>
                     <td th:text="${booking.status}">CONFIRMED</td>

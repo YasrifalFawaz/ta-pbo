@@ -66,76 +66,63 @@
                                         <td class="fw-bold">Email:</td>
                                         <td th:text="${booking.user.email}">john@example.com</td>
                                     </tr>
-                                    <tr>
-                                        <td class="fw-bold">No. Telepon:</td>
-                                        <td th:text="${booking.user.phoneNumber}">081234567890</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Alamat:</td>
-                                        <td th:text="${booking.user.address}">Jakarta, Indonesia</td>
-                                    </tr>
                                 </table>
                             </div>
                         </div>
-
                         <hr>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="text-primary mb-3">Informasi Kamar</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Nomor Kamar:</td>
+                                            <td th:text="${booking.room.roomNumber}">101</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Tipe Kamar:</td>
+                                            <td th:text="${booking.room.roomType.typeName}">Deluxe</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Harga per Malam:</td>
+                                            <td th:text="${'Rp ' + #numbers.formatDecimal(booking.room.price, 0, 'COMMA', 0, 'POINT')}">Rp 100,000</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Kapasitas:</td>
+                                            <td th:text="${booking.room.roomType.maxOccupancy + ' orang'}">2 orang</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Status Kamar:</td>
+                                            <td>
+                                                <span th:class="${'badge ' + 
+                                                    (booking.room.status == 'AVAILABLE' ? 'bg-success' : 
+                                                    booking.room.status == 'OCCUPIED' ? 'bg-warning' : 
+                                                    booking.room.status == 'MAINTENANCE' ? 'bg-danger' : 'bg-secondary')}" 
+                                                    th:text="${booking.room.status}">AVAILABLE</span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
 
-                        <div class="row">
-                            <!-- Room Information -->
-                            <div class="col-md-6">
-                                <h5 class="text-primary mb-3">Informasi Kamar</h5>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td class="fw-bold">Nomor Kamar:</td>
-                                        <td th:text="${booking.room.roomNumber}">101</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Tipe Kamar:</td>
-                                        <td th:text="${booking.room.roomType.name}">Deluxe</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Harga per Malam:</td>
-                                        <td th:text="${'Rp ' + #numbers.formatDecimal(booking.room.price, 0, 'COMMA', 0, 'POINT')}">Rp 100,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Kapasitas:</td>
-                                        <td th:text="${booking.room.roomType.capacity + ' orang'}">2 orang</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Status Kamar:</td>
-                                        <td>
-                                            <span th:class="${'badge ' + 
-                                                (booking.room.status == 'AVAILABLE' ? 'bg-success' : 
-                                                 booking.room.status == 'OCCUPIED' ? 'bg-warning' : 
-                                                 booking.room.status == 'MAINTENANCE' ? 'bg-danger' : 'bg-secondary')}" 
-                                                  th:text="${booking.room.status}">AVAILABLE</span>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <!-- Additional Information -->
+                                <div class="col-md-6">
+                                    <h5 class="text-primary mb-3">Informasi Tambahan</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td class="fw-bold">Permintaan Khusus:</td>
+                                            <td th:text="${booking.specialRequests ?: 'Tidak ada'}">Tidak ada</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Dibuat pada:</td>
+                                            <td th:text="${#temporals.format(booking.createdAt, 'dd MMMM yyyy HH:mm')}">01 Januari 2024 10:30</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Terakhir diupdate:</td>
+                                            <td th:text="${#temporals.format(booking.updatedAt, 'dd MMMM yyyy HH:mm')}">01 Januari 2024 10:30</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             </div>
-
-                            <!-- Additional Information -->
-                            <div class="col-md-6">
-                                <h5 class="text-primary mb-3">Informasi Tambahan</h5>
-                                <table class="table table-borderless">
-                                    <tr>
-                                        <td class="fw-bold">Permintaan Khusus:</td>
-                                        <td th:text="${booking.specialRequests ?: 'Tidak ada'}">Tidak ada</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Dibuat pada:</td>
-                                        <td th:text="${#temporals.format(booking.createdAt, 'dd MMMM yyyy HH:mm')}">01 Januari 2024 10:30</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="fw-bold">Terakhir diupdate:</td>
-                                        <td th:text="${#temporals.format(booking.updatedAt, 'dd MMMM yyyy HH:mm')}">01 Januari 2024 10:30</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-
                         <hr>
-
                         <!-- Action Buttons -->
                         <div class="d-flex justify-content-between align-items-center">
                             <a href="/admin/booking" class="btn btn-secondary">
@@ -192,4 +179,4 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html> 
