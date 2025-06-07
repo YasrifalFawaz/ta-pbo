@@ -12,6 +12,29 @@
         .form-control.is-invalid {
             border-color: #dc3545;
         }
+
+        .alert {
+            margin-bottom: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1abc9c;
+            box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+        }
+
+        .btn-primary {
+            background-color: #1abc9c;
+            border-color: #1abc9c;
+        }
+
+        .btn-primary:hover {
+            background-color: #16a085;
+            border-color: #16a085;
+        }
+
+        .required-field {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -21,69 +44,61 @@
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
+            <!-- Alert Messages -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Error!</strong> <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Berhasil!</strong> <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
             <div class="card">
                 <div class="card-header">
                     <h3>Tambah Booking Baru</h3>
                 </div>
                 <div class="card-body">
-
-                    <!-- SUCCESS ALERT -->
-                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert" aria-live="assertive">
-                        <span th:text="${success}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                    <!-- ERROR ALERT -->
-                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert" aria-live="assertive">
-                        <span th:text="${error}"></span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                    <form th:action="@{/admin/booking/save}" th:object="${booking}" method="post" id="bookingForm">
-                        <input type="hidden" th:field="*{id}" />
+                    <form th:action="@{/admin/booking/save}" th:object="${booking}" method="post">
+                        <input type="hidden" th:field="*{id}">
 
                         <!-- Guest Selection -->
                         <div class="mb-3">
-                            <label for="user" class="form-label">Pilih Guest *</label>
-                            <select class="form-select" th:field="*{user.id}" id="user" required>
+                            <label for="userId" class="form-label">
+                                Pilih Guest <span class="required-field">*</span>
+                            </label>
+                            <select class="form-select" name="user.id" id="userId" required>
                                 <option value="">-- Pilih Guest --</option>
-                                <option th:each="user : ${users}" th:value="${user.id}"
-                                        th:text="${user.fullName + ' (' + user.email + ')'}"></option>
+                                <option th:each="user : ${users}" 
+                                        th:value="${user.id}"
+                                        th:selected="${booking.user != null && booking.user.id == user.id}"
+                                        th:text="${user.fullName + ' (' + user.email + ')'}">
+                                </option>
                             </select>
-                            <div class="error-message" th:if="${#fields.hasErrors('user.id')}" th:errors="*{user.id}"></div>
                         </div>
 
                         <!-- Room Selection -->
-                        <div class="mb-3">
-                            <label for="roomSelect" class="form-label">Pilih Kamar *</label>
-                            <select id="roomSelect" th:field="*{room.id}" class="form-select" required>
-                                <option value="">-- Pilih Kamar --</option>
-                                <option th:each="room : ${rooms}"
-                                        th:value="${room.id}"
-                                        th:text="${room.roomNumber + ' - Rp ' + #numbers.formatDecimal(room.price, 0, 'COMMA', 0, 'POINT')}">
-                                </option>
-                            </select>
-                            <div class="error-message" th:if="${#fields.hasErrors('room.id')}" th:errors="*{room.id}"></div>
-                        </div>
+                        <select id="roomSelect" th:field="*{room.id}" class="form-select" required>
+                            <option value="" disabled selected>-- Pilih Kamar --</option>
+                            <option th:each="room : ${rooms}" 
+                                    th:value="${room.id}" 
+                                    th:text="${room.roomNumber + ' - Rp ' + #numbers.formatDecimal(room.price, 0, 'COMMA', 0, 'POINT')}">
+                            </option>
+                        </select>
 
                         <!-- Date Selection -->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="checkInDate" class="form-label">Tanggal Check-in *</label>
-                                    <input type="date" class="form-control" th:field="*{checkInDate}" 
-                                           id="checkInDate" required
-                                           th:classappend="${#fields.hasErrors('checkInDate')} ? 'is-invalid'">
-                                    <div class="error-message" th:if="${#fields.hasErrors('checkInDate')}" th:errors="*{checkInDate}"></div>
+                                    <input type="date" class="form-control" th:field="*{checkInDate}" id="checkInDate" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="checkOutDate" class="form-label">Tanggal Check-out *</label>
-                                    <input type="date" class="form-control" th:field="*{checkOutDate}" 
-                                           id="checkOutDate" required
-                                           th:classappend="${#fields.hasErrors('checkOutDate')} ? 'is-invalid'">
-                                    <div class="error-message" th:if="${#fields.hasErrors('checkOutDate')}" th:errors="*{checkOutDate}"></div>
+                                    <input type="date" class="form-control" th:field="*{checkOutDate}" id="checkOutDate" required>
                                 </div>
                             </div>
                         </div>
@@ -92,36 +107,36 @@
                         <div class="mb-3">
                             <label for="guestCount" class="form-label">Jumlah Tamu *</label>
                             <input type="number" class="form-control" th:field="*{guestCount}"
-                                   id="guestCount" min="1" max="10" required
-                                   th:classappend="${#fields.hasErrors('guestCount')} ? 'is-invalid'">
-                            <div class="error-message" th:if="${#fields.hasErrors('guestCount')}" th:errors="*{guestCount}"></div>
+                                   id="guestCount" min="1" max="10" required>
                         </div>
 
                         <!-- Status Selection -->
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
-                            <select class="form-select" th:field="*{status}" id="status">
-                                <option value="PENDING">PENDING</option>
-                                <option value="CONFIRMED">CONFIRMED</option>
-                                <option value="CHECKED_IN">CHECKED_IN</option>
-                                <option value="CHECKED_OUT">CHECKED_OUT</option>
-                                <option value="CANCELLED">CANCELLED</option>
+                            <select class="form-select" name="status" id="status">
+                                <option value="PENDING" th:selected="${booking.status == 'PENDING'}">PENDING</option>
+                                <option value="CONFIRMED" th:selected="${booking.status == 'CONFIRMED' || booking.status == null}">CONFIRMED</option>
+                                <option value="CHECKED_IN" th:selected="${booking.status == 'CHECKED_IN'}">CHECKED_IN</option>
+                                <option value="CHECKED_OUT" th:selected="${booking.status == 'CHECKED_OUT'}">CHECKED_OUT</option>
+                                <option value="CANCELLED" th:selected="${booking.status == 'CANCELLED'}">CANCELLED</option>
                             </select>
                         </div>
 
                         <!-- Special Requests -->
                         <div class="mb-3">
                             <label for="specialRequests" class="form-label">Permintaan Khusus</label>
-                            <textarea class="form-control" th:field="*{specialRequests}"
-                                      id="specialRequests" rows="3"
-                                      placeholder="Contoh: Extra bed, late check-in, dll"></textarea>
+                            <textarea class="form-control" 
+                                      name="specialRequests"
+                                      id="specialRequests" 
+                                      rows="3"
+                                      placeholder="Contoh: Extra bed, late check-in, dll"
+                                      th:text="${booking.specialRequests}"></textarea>
                         </div>
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-between">
-                            
-                            <button type="submit" class="btn btn-primary">Simpan Booking</button>
                             <a th:href="@{/admin/booking}" class="btn btn-secondary">Kembali</a>
+                            <button type="submit" class="btn btn-primary">Simpan Booking</button>
                         </div>
                     </form>
                 </div>
@@ -146,82 +161,38 @@
 
         const checkInInput = document.getElementById('checkInDate');
         const checkOutInput = document.getElementById('checkOutDate');
-        const bookingForm = document.getElementById('bookingForm');
 
-        // Set minimum date to today
         const today = new Date().toISOString().split('T')[0];
         checkInInput.min = today;
         checkOutInput.min = today;
 
-        // Update check-out min date when check-in changes
-        checkInInput.addEventListener('change', function () {
+        checkInInput.addEventListener('change', function() {
             const checkInDate = new Date(this.value);
             checkInDate.setDate(checkInDate.getDate() + 1);
             checkOutInput.min = checkInDate.toISOString().split('T')[0];
-
             if (checkOutInput.value && new Date(checkOutInput.value) <= new Date(this.value)) {
                 checkOutInput.value = '';
             }
+            
+            validateDates();
         });
 
-        // Client-side validation before submit
-        bookingForm.addEventListener('submit', function (e) {
-            const userSelect = document.getElementById('user');
-            const roomSelect = document.getElementById('roomSelect');
-            const checkInDate = document.getElementById('checkInDate');
-            const checkOutDate = document.getElementById('checkOutDate');
-            const guestCount = document.getElementById('guestCount');
-
-            [userSelect, roomSelect, checkInDate, checkOutDate, guestCount].forEach(el => {
-                el.classList.remove('is-invalid');
-            });
-
-            let isValid = true;
-
-            if (!userSelect.value) {
-                userSelect.classList.add('is-invalid');
-                isValid = false;
-            }
-
-            if (!roomSelect.value) {
-                roomSelect.classList.add('is-invalid');
-                isValid = false;
-            }
-
-            if (!checkInDate.value) {
-                checkInDate.classList.add('is-invalid');
-                isValid = false;
-            }
-
-            if (!checkOutDate.value) {
-                checkOutDate.classList.add('is-invalid');
-                isValid = false;
-            }
-
-            if (!guestCount.value || guestCount.value < 1 || guestCount.value > 10) {
-                guestCount.classList.add('is-invalid');
-                isValid = false;
-            }
-
-            if (checkInDate.value && checkOutDate.value) {
-                const checkIn = new Date(checkInDate.value);
-                const checkOut = new Date(checkOutDate.value);
-
-                if (checkOut <= checkIn) {
-                    checkOutDate.classList.add('is-invalid');
-                    alert('Tanggal check-out harus setelah tanggal check-in!');
-                    isValid = false;
-                }
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-                const firstInvalid = document.querySelector('.is-invalid');
-                if (firstInvalid) {
-                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
+        // Handle check-out date change
+        checkOutInput.addEventListener('change', function() {
+            validateDates();
         });
+
+        function validateDates() {
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(checkOutInput.value);
+            if (checkIn && checkOut && checkOut <= checkIn) {
+                alert('Tanggal check-out harus setelah tanggal check-in!');
+                checkOutInput.value = '';
+                return false;
+            }
+            return true;
+        }
+        checkOutInput.addEventListener('change', validateDates);
     });
 </script>
 
