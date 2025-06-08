@@ -97,13 +97,13 @@ public class UserBookingController {
         
         model.addAttribute("booking", booking);
         model.addAttribute("room", room);
-        return "user/booking-form";
+        return "user/booking";
     }
 
     // Submit booking
     @PostMapping("/booking/submit")
     public String submitBooking(@ModelAttribute Booking booking,
-                               @RequestParam Long userId) {
+                            @RequestParam Long userId) {
         
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan"));
@@ -118,28 +118,36 @@ public class UserBookingController {
         
         bookingRepository.save(booking);
         
-        return "redirect:/user/booking/" + userId;
+        // Redirect ke halaman daftar booking user
+        return "redirect:/user/my-bookings/" + userId;
     }
+
 
     // My bookings
     @GetMapping("/my-bookings/{userId}")
     public String myBookings(@PathVariable Long userId, Model model) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan"));
-        
+
         List<Booking> myBookings = bookingRepository.findByUserOrderByCreatedAtDesc(user);
-        
+
+        // Panggil calculateTotalPrice untuk tiap booking
+        for (Booking booking : myBookings) {
+            booking.calculateTotalPrice();
+        }
+
         model.addAttribute("bookings", myBookings);
         model.addAttribute("user", user);
         return "user/my-bookings";
     }
+
 
     // Booking detail
     @GetMapping("/booking-detail/{bookingId}")
     public String bookingDetail(@PathVariable Long bookingId, Model model) {
         Booking booking = bookingRepository.findById(bookingId)
             .orElseThrow(() -> new IllegalArgumentException("Booking tidak ditemukan"));
-        
+        booking.calculateTotalPrice();
         model.addAttribute("booking", booking);
         return "user/booking-detail";
     }
@@ -157,5 +165,11 @@ public class UserBookingController {
         }
         
         return "redirect:/user/my-bookings/" + booking.getUser().getId();
+    }
+    @GetMapping("/user/booking/{userId}")
+    public String showUserBookings(@PathVariable Long userId, Model model) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        model.addAttribute("bookings", bookings);
+        return "user-bookings";
     }
 }
