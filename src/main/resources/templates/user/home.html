@@ -185,15 +185,19 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
-                         <a href="#" class="d-flex align-items-center text-decoration-none text-secondary dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" class="d-flex align-items-center text-decoration-none text-secondary dropdown-toggle" 
+                        id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle icon-text me-1"></i>
-                            <span>User</span>
+                            <span th:text="${user.fullName}">User</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownUser">
-                    <li>
-                        <a class="dropdown-item" th:href="@{/logout}">Logout</a>
-                    </li>
-                    </ul>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/user/my-bookings}">History Booking</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/logout}">Logout</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>

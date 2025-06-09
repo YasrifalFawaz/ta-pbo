@@ -34,11 +34,6 @@
         </div>
 
         <div class="mb-3">
-            <label class="form-label">User ID (masukkan ID user Anda):</label>
-            <input type="number" name="userId" class="form-control" required />
-        </div>
-
-        <div class="mb-3">
             <p><strong>Total Malam:</strong> <span id="totalNights" th:text="${booking.totalNights != null ? booking.totalNights : 0}"></span></p>
             <p><strong>Total Harga:</strong> Rp <span id="totalPrice" th:text="${booking.totalPrice != null ? #numbers.formatDecimal(booking.totalPrice, 0, 'COMMA', 2, 'POINT') : 0}"></span></p>
         </div>

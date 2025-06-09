@@ -27,9 +27,12 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute User user, Model model) {
+    public String login(@ModelAttribute User user, Model model, HttpSession session) {
         User u = userRepo.findByUsernameAndPassword(user.getUsername(), user.getPassword());
         if (u != null) {
+            // Simpan user ke session
+            session.setAttribute("loggedInUser", u);
+
             // Cek role user setelah login
             if ("ADMIN".equals(u.getRole())) {
                 return "redirect:/admin/dashboard";
@@ -64,6 +67,7 @@ public class LoginController {
         userRepo.save(user);
         return "redirect:/login";
     }
+
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
